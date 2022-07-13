@@ -49,3 +49,37 @@ app.post('/api/insertTeamInformation', (req, res) => {
         }
     });
 });
+
+app.get('/api/getAllMatchResults', (req, res) => {
+    const sqlSelect = "SELECT * FROM match_results";
+    db.query(sqlSelect, (err, result) => {
+        if (err) {
+            res.status(400).send(err.sqlMessage);
+        } else {
+            res.send(result)
+        }
+    });
+});
+
+app.post('/api/insertMatchResults', (req, res) => {
+    const matchResultsList = req.body.matchResultsList;
+
+    db.query("DELETE FROM match_results", (err, result) => {
+        if (result) {
+            const sql = "INSERT INTO match_results (team_1, team_2, team_1_goals, team_2_goals) VALUES ?";
+            const values = matchResultsList.map(mr => [mr.team1, mr.team2, mr.team1_goals, mr.team2_goals]);
+            db.query(sql, [values], (err, result) => {
+                if (result) {
+                    res.status(200).send("OK");
+                }
+                if (err) {
+                    console.log(err)
+                    res.status(400).send(err.sqlMessage);
+                }
+            });
+        }
+        if (err) {
+            console.log(err);
+        }
+    });
+});
