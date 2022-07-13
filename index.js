@@ -20,6 +20,8 @@ app.listen(3001, () => {
 })
 
 // Routes
+
+// Team Information
 app.get('/api/getAllTeamInformation', (req, res) => {
     const sqlSelect = "SELECT * FROM team_information";
     db.query(sqlSelect, (err, result) => {
@@ -50,6 +52,7 @@ app.post('/api/insertTeamInformation', (req, res) => {
     });
 });
 
+// Match Results
 app.get('/api/getAllMatchResults', (req, res) => {
     const sqlSelect = "SELECT * FROM match_results";
     db.query(sqlSelect, (err, result) => {
@@ -82,4 +85,61 @@ app.post('/api/insertMatchResults', (req, res) => {
             console.log(err);
         }
     });
+});
+
+// Team Scores
+app.get('/api/getAllTeamScores', (req, res) => {
+    const sqlSelect = "SELECT * FROM team_scores";
+    db.query(sqlSelect, (err, result) => {
+        if (err) {
+            res.status(400).send(err.sqlMessage);
+        } else {
+            res.send(result);
+        }
+    });
+});
+
+app.post('/api/insertTeamScores', (req, res) => {
+    let teamScoreList = req.body.teamScoreList;
+    teamScoreList = teamScoreList.map(x => ({...x, registration_date: new Date(x.registration_date)}));
+    db.query("DELETE FROM team_scores", (err, result) => {
+        if (result) {
+            const sql = "INSERT INTO team_scores (team_name, match_points, total_goals, alt_match_points, registration_date, group_number) VALUES ?";
+            const values = teamScoreList.map(team => [team.team_name, team.match_points, team.total_goals, team.alt_match_points, team.registration_date, team.group_number])
+            db.query(sql, [values], (err, result) => {
+                if (result) {
+                    res.status(200).send("OK");
+                }
+                if (err) {
+                    console.log(err);
+                    res.status(400).send(err.sqlMessage);
+                }
+            });
+        }
+    });
+});
+
+app.get('/api/clearAll', (req, res) => {
+    let sql = "DELETE FROM team_scores";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            throw err;
+        }
+    });
+    sql = "DELETE FROM team_information";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            throw err;
+        }
+    });
+    sql = "DELETE FROM match_results";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            throw err;
+        }
+    });
+    res.status(200).send("OK");
 });
