@@ -20,6 +20,9 @@ app.listen(3001, () => {
 })
 
 // Routes
+app.get('/', (req, res) => {
+    res.status(200).send("Connected");
+});
 
 // Team Information
 app.get('/api/getAllTeamInformation', (req, res) => {
