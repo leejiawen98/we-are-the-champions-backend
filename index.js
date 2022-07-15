@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}))
 
-app.listen(3001, () => {
+app.listen(process.env.PORT || 30001, () => {
     console.log('running on port 3001');
 })
 
