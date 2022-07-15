@@ -5,10 +5,10 @@ const cors = require('cors')
 const mysql = require('mysql')
 
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'password',
-    database: 'champion_db'
+    host: 'us-cdbr-east-06.cleardb.net',
+    user: 'b05a84bc3f92e9',
+    password: 'd6dfe19c',
+    database: 'heroku_bd247f7ff7eab99'
 })
 
 app.use(cors());
